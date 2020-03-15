@@ -1,7 +1,5 @@
 let express = require('express');
 let router = express.Router();
-let util = require('util');
-const fs = require('fs');
 
 /**
  * GET EVENT DATA
