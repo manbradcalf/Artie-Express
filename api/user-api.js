@@ -5,11 +5,24 @@ let router = express.Router();
  * GET USER DATA
  */
 router.get('/:userId', function (req, res) {
+    console.log("Getting user")
     db.child('users')
         .child(req.params.userId)
         .once('value')
         .then(function (snapshot) {
-            res.send(snapshot.val())
+            let response = snapshot.val();
+
+            response.events = Object.entries(response.events)
+                .map(function (event) {
+                    return {
+                        "eventId": event[0],
+                        "attendingStatus": event[1]
+                    }
+                });
+
+            response.contacts = Object.keys(response.contacts);
+            response.unavailable_dates = Object.keys(response.unavailable_dates);
+            res.send(response)
         })
 });
 
