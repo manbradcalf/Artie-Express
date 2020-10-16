@@ -46,7 +46,9 @@ router.get('/:eventId/users', function (req, res) {
                         db.child(`/users/${userId}`)
                             .once('value')
                             .then(function (userInfo) {
-                                responseBody.attendees.push(userInfo.val());
+                                let userResponseBody = userInfo.val();
+                                userResponseBody.userId = userInfo.key;
+                                responseBody.attendees.push(userResponseBody);
 
                                 // We have all the users now
                                 if (i === inviteeIds.length - 1) {
@@ -55,13 +57,14 @@ router.get('/:eventId/users', function (req, res) {
                             })
                             .catch((error) => {
                                 console.log(error);
-                                res.status(500).send(error);
+                                res.status(500).send("ERROR: " + error.message);
                             });
                     }
                 }
             },
             (error) => {
                 console.log(error)
+                res.status(500).send(error)
             })
 });
 

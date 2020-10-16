@@ -24,7 +24,7 @@ router.get('/:userId', function (req, res) {
             response.unavailable_dates = Object.keys(response.unavailable_dates);
             res.send(response)
         })
-});
+})
 
 /**
  * GET ALL EVENTS FOR USER
@@ -35,18 +35,20 @@ router.get('/:userId/events', function (req, res) {
         .once('value')
         .then((userData) => {
             if (userData == null) {
-                res.status(404).send({"message": "unable to find user"})
+                res.status(404).send({ "message": "unable to find user" })
             } else {
                 // we got user data, get the events and build a response
-                let responseBody = {"events": []};
+                let responseBody = { "events": [] };
                 let eventIds = Object.keys(userData.val());
 
                 // get event details for each eventId in user details
                 for (let i = 0; i < eventIds.length; i++) {
                     db.child(`/events/${eventIds[i]}`)
                         .once('value')
-                        .then(function (eventInfo) {
-                            responseBody.events.push(eventInfo.val());
+                        .then(function (eventDBInfo) {
+                            let eventResponse = eventDBInfo.val()
+                            eventResponse.eventId = eventDBInfo.key
+                            responseBody.events.push(eventResponse);
 
                             if (i === eventIds.length - 1) {
                                 res.send(responseBody)
@@ -58,6 +60,10 @@ router.get('/:userId/events', function (req, res) {
                         });
                 }
             }
+        })
+        .catch((error) => {
+            console.log(error)
+            res.status(500).send(error)
         });
 });
 /**
@@ -107,5 +113,45 @@ router.get('/:userId/events/attending', function (req, res) {
             res.send(data);
         });
 });
+
+//TODO: Get Contacts
+//         @GET("/users/{id}/contacts.json")
+//         getUserContacts(@Path("id") userId: String): Response<HashMap<String, Boolean>>
+
+//TODO: Update user
+//         @PUT("/users/{userId}.json")
+//         updateUser(@Body user: User, @Path("userId") userId: String): Response<User>
+
+//TODO: Reject Invite
+//         @PUT("/users/{userId}/events/{eventId}/isInviteRejected.json")
+//         rejectInvite(@Body bool: Boolean?, @Path("userId") userId: String, @Path("eventId") eventId: String): Response<Boolean>
+
+//TODO: Accept Invite
+//         @PUT("/users/{userId}/events/{eventId}/isInviteAccepted.json")
+//         acceptInvite(@Body bool: Boolean?, @Path("userId") userId: String, @Path("eventId") eventId: String): Response<Boolean>
+
+//         @PATCH("/users/{userId}.json")
+//         patchUser(@Body user: User, @Path("userId") userId: String): Response<User>
+
+//TODO: Add Contact
+//         @PUT("/users/{userId}/contacts/{contactId}.json")
+//         addContactToUserAsync(@Body isContact: Boolean, @Path("userId") userId: String, @Path("contactId") contactId: String): Response<Boolean>
+
+//TODO: Add Event To User
+//         @PUT("/users/{userId}/events/{eventId}.json")
+//         addEventToUser(@Body eventInviteInfo: EventInviteInfo, @Path("userId") userId: String, @Path("eventId") eventId: String): Response<EventInviteInfo>
+
+//         @DELETE("/events/{eventId}/users/{userId}.json")
+//         removeUserFromEvent(@Path("eventId") eventId: String, @Path("userId") userId: String): Response<Response<Void>>
+
+//         @PUT("/events/{eventId}/host.json")
+//         updateEventHost(@Body host: Host, @Path("eventId") eventId: String): Response<Host>
+
+//         @PUT("/users/{userId}/unavailable_dates/{date}.json")
+//         setDateUnavailableForUser(@Body unavailable: Boolean?, @Path("userId") userId: String,
+//                                               @Path("date") date: String): Response<Boolean>
+//     }
+
+
 
 module.exports = router;

@@ -4,13 +4,12 @@ let path = require('path');
 let cookieParser = require('cookie-parser');
 let logger = require('morgan');
 let admin = require("firebase-admin");
-
-// View routers
 let indexRouter = require('./web/routes');
 let contactRouter = require('./web/routes/contact');
 let aboutRouter = require('./web/routes/about');
 let appsRouter = require('./web/routes/portfolio');
 let userRouter = require('./web/routes/user.js');
+let eventRouter = require('./web/routes/event.js');
 let portfolioRouter = require('./web/routes/portfolio.js');
 
 // API Routers
@@ -34,6 +33,7 @@ app.use('/contact', contactRouter);
 app.use('/about', aboutRouter);
 app.use('/apps', appsRouter);
 app.use('/user', userRouter);
+app.use('/event', eventRouter);
 app.use('/portfolio', portfolioRouter);
 
 app.use('/api/user', userApiRouter);
