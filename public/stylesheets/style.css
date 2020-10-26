@@ -1,43 +1,49 @@
 body {
-    padding: 10px;
-    font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  padding: 10px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+.event-list-item {
+  margin: 1vw;
+  padding: 1vw;
+  border: 1px;
+  border-style: solid;
 }
 
 .sidebar {
-    margin: 0;
-    padding: 0;
-    width: 200px;
-    background-color: lightslategray;
-    position: fixed;
-    height: 100%;
-    overflow: auto;
+  margin: 0;
+  padding: 0;
+  width: 200px;
+  background-color: lightslategray;
+  position: fixed;
+  height: 100%;
+  overflow: auto;
 }
 
 .sidebar a {
-    display: block;
-    color: black;
-    padding: 16px;
-    text-decoration: none;
+  display: block;
+  color: black;
+  padding: 16px;
+  text-decoration: none;
 }
 
 .sidebar a.active {
-    background-color: black;
-    color: white;
+  background-color: black;
+  color: white;
 }
 
 /* Links on mouse-over */
 .sidebar a:hover:not(.active) {
-    background-color: #555;
-    color: white;
+  background-color: #555;
+  color: white;
 }
 
 div.content {
-    margin-left: 200px;
-    padding: 1px 16px;
-    height: 1000px;
+  margin-left: 200px;
+  padding: 1px 16px;
+  height: 1000px;
 }
 
-
 a {
-    color: #00B7FF;
+  color: #00b7ff;
 }

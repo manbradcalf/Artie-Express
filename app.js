@@ -7,10 +7,8 @@ let admin = require("firebase-admin");
 let indexRouter = require('./web/routes');
 let contactRouter = require('./web/routes/contact');
 let aboutRouter = require('./web/routes/about');
-let appsRouter = require('./web/routes/portfolio');
 let userRouter = require('./web/routes/user.js');
 let eventRouter = require('./web/routes/event.js');
-let portfolioRouter = require('./web/routes/portfolio.js');
 
 // API Routers
 let userApiRouter = require('./api/user-api.js');
@@ -31,10 +29,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/contact', contactRouter);
 app.use('/about', aboutRouter);
-app.use('/apps', appsRouter);
 app.use('/user', userRouter);
 app.use('/event', eventRouter);
-app.use('/portfolio', portfolioRouter);
 
 app.use('/api/user', userApiRouter);
 app.use('/api/event', eventApiRouter);
