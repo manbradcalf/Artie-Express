@@ -1,6 +1,19 @@
 let express = require("express");
 let router = express.Router();
-
+/**
+ *
+ */
+router.get("/", function(req,res) {
+  db.child("users")
+    .once("value")
+    .then(function (snapshot) {
+      let users = snapshot.val();
+      Object.keys(users).forEach((userId) => {
+        users[userId].url = `./user/${userId}`
+      })
+      res.render("users", Object.entries(users))
+    })
+})
 /**
  * GET USER DATA
  */
