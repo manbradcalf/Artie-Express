@@ -6,7 +6,6 @@
     "start": "node bin/www.js"
   },
   "dependencies": {
-    "node-forge": ">=0.10.0",
     "bootstrap": "^4.4.1",
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
@@ -15,6 +14,7 @@
     "hbs": "^4.1.0",
     "http-errors": "~1.6.3",
     "morgan": "~1.9.1",
+    "node-forge": ">=0.10.0",
     "react": "^16.12.0",
     "request": "latest",
     "underscore": "^1.9.2"

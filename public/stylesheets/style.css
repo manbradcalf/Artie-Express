@@ -10,6 +10,17 @@ body {
   border-style: solid;
 }
 
+.user-detail-image {
+  width: 25%;
+  height: auto;
+}
+
+.user-detail-info {
+  margin: 3vw;
+  display: inline-block;
+  width: 40vw;
+}
+
 .sidebar {
   margin: 0;
   padding: 0;

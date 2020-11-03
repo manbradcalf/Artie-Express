@@ -13,8 +13,6 @@ router.get("/", function (req, res) {
       // each entry looks like ["-firebAseIde23, {eventName, date, etc}"]
       Object.keys(events).forEach((eventId) => {
         // add a url property for easy use in template
-        console.log(`eventId ${eventId}`)
-        console.log(`eventname is ${events[eventId].eventname}`)
         events[eventId].url = `./event/${eventId}`;
       });
 
