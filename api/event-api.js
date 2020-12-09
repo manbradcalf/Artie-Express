@@ -1,26 +1,30 @@
 let express = require("express");
 let router = express.Router();
 
+async function getEvents() {
+  let events;
+  await db.child("events")
+    .once("value")
+    .then((eventsData) => {
+      console.log(`eventsdata is ${JSON.stringify(eventsData)}`);
+      events = eventsData;
+    });
+  return events;
+}
 
 /**
  * GET ALL EVENTS
  */
-router.get("/", function(req, res) {
-  db.child('events')
-    .once("value")
-    .then((eventsData) => {
-      res.send(eventsData.val())
-    ,(error) => {
-      console.log(error);
-      res.status(500).send(error)
-    }
+router.get("/", async (req, res) => {
+  let events = await getEvents();
+  console.log(`event data is ${events}`)
+  res.send(events);
 });
-})
 
 /**
  * GET EVENT DATA
  */
-router.get("/:eventId", function (req, res) {
+router.get("/:eventId", async (req, res) => {
   db.child(`events/${req.params.eventId}`)
     .once("value")
     .then(
@@ -30,11 +34,9 @@ router.get("/:eventId", function (req, res) {
         }
         // TODO: Make a reusable error model
         else {
-          res
-            .status(404)
-            .send({
-              message: `No event exists with request eventId ${req.params.eventId}`,
-            });
+          res.status(404).send({
+            message: `No event exists with request eventId ${req.params.eventId}`,
+          });
         }
       },
       (error) => {
@@ -53,9 +55,9 @@ router.get("/:eventId/users", function (req, res) {
     .then(
       (eventData) => {
         if (eventData == null) {
-          res
-            .status(404)
-            .send({ message: `Unable to find eventId ${req.params.eventsId}` });
+          res.status(404).send({
+            message: `Unable to find eventId ${req.params.eventsId}`,
+          });
         } else {
           // We got an event, build response object and grab userIds to iterate thru
           let responseBody = { host: {}, attendees: [] };
@@ -93,4 +95,4 @@ router.get("/:eventId/users", function (req, res) {
     );
 });
 
-module.exports = router;
+(module.exports = router), getEvents;

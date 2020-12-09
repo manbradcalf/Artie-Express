@@ -1,30 +1,25 @@
 let express = require("express");
 let router = express.Router();
 let handlebars = require("handlebars");
+const { getEvents } = require("../../api/event-api");
 
 /**
  * GET ALL EVENTS
  */
-router.get("/", function (req, res) {
-  db.child("events")
-    .once("value")
-    .then(function (snapshot) {
-      let events = snapshot.val();
-      // each entry looks like ["-firebAseIde23, {eventName, date, etc}"]
-      Object.keys(events).forEach((eventId) => {
-        // add a url property for easy use in template
-        events[eventId].url = `./event/${eventId}`;
-      });
-
-      console.log(`about to render events: \n ${JSON.stringify(events)}`)
-      res.render("events", Object.entries(events));
-    });
+router.get("/", async(req, res) => {
+  let events = await getEvents();
+  res.render("events", result);
+  Object.keys(events).forEach((eventId) => {
+    // add a url property for easy use in template
+    events[eventId].url = `./event/${eventId}`;
+  });
+  res.render("events", Object.entries(events));
 });
 
 /**
  * GET EVENT DATA
  */
-router.get("/:eventId", function (req, res) {
+router.get("/:eventId", async(req, res) => {
   db.child("events")
     .child(req.params.eventId)
     .once("value")
