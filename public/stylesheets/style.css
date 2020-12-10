@@ -13,12 +13,14 @@ body {
 .user-detail-image {
   width: 25%;
   height: auto;
+  border-radius: 2vw;
 }
 
 .user-detail-info {
   margin: 3vw;
   display: inline-block;
   width: 40vw;
+  vertical-align: middle;
 }
 
 .sidebar {
