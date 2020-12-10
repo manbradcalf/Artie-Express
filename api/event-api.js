@@ -3,13 +3,35 @@ let router = express.Router();
 
 async function getEvents() {
   let events;
-  await db.child("events")
+  await db
+    .child("events")
     .once("value")
     .then((eventsData) => {
-      console.log(`eventsdata is ${JSON.stringify(eventsData)}`);
       events = eventsData;
     });
   return events;
+}
+
+async function getEvent(eventId) {
+  let eventResponse;
+  await db
+    .child(`events/${eventId}`)
+    .once("value")
+    .then(
+      (eventData) => {
+        if (eventData.val()) {
+          eventResponse = eventData;
+        } else {
+          eventResponse = {
+            message: `No event exists for the requested event id ${req.params.eventId}`,
+          };
+        }
+      },
+      (error) => {
+        eventResponse = error;
+      }
+    );
+  return eventResponse;
 }
 
 /**
@@ -17,7 +39,7 @@ async function getEvents() {
  */
 router.get("/", async (req, res) => {
   let events = await getEvents();
-  console.log(`event data is ${events}`)
+  console.log(`event data is ${events}`);
   res.send(events);
 });
 
@@ -25,25 +47,8 @@ router.get("/", async (req, res) => {
  * GET EVENT DATA
  */
 router.get("/:eventId", async (req, res) => {
-  db.child(`events/${req.params.eventId}`)
-    .once("value")
-    .then(
-      (eventData) => {
-        if (eventData.val() != null) {
-          res.send(eventData.val());
-        }
-        // TODO: Make a reusable error model
-        else {
-          res.status(404).send({
-            message: `No event exists with request eventId ${req.params.eventId}`,
-          });
-        }
-      },
-      (error) => {
-        console.log(error);
-        res.status(500).send(error);
-      }
-    );
+  let event = await getEvent(req.params.eventId);
+  res.send(event);
 });
 
 /**
