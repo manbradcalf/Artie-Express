@@ -1,30 +1,38 @@
 let express = require("express");
 let router = express.Router();
+let usersDBClient = require("../data/usersDBClient.js");
+
+/**
+ * GET ALL USERS
+ */
+router.get("/", async (req, res) => {
+  try {
+    let users = await usersDBClient.getUsers();
+    if (users) {
+      res.send(users);
+    } else {
+      res.sendStatus(404);
+    }
+  } catch (e) {
+    res.status(500).send({ error: e.message });
+  }
+});
 
 /**
  * GET USER DATA
  */
-router.get("/:userId", function (req, res) {
-  db.child("users")
-    .child(req.params.userId)
-    .once("value")
-    .then(function (snapshot) {
-      let response = snapshot.val();
-
-      response.events = Object.entries(response.events).map(function (event) {
-        return {
-          eventId: event[0],
-          attendingStatus: event[1],
-        };
-      });
-
-      response.contacts = Object.keys(response.contacts);
-
-      // TODO: Implement unavailable dates
-      // response.unavailable_dates = Object.keys(response.unavailable_dates);
-
-      res.send(response);
-    });
+router.get("/:userId", async (req, res) => {
+  try {
+    let user = await usersDBClient.getUser(req.params.userId);
+    if (user) {
+      res.send(user);
+    } else {
+      console.log(`user is ${JSON.stringify(user)}`);
+      res.sendStatus(500);
+    }
+  } catch (e) {
+    res.status(500).send({ error: e.message });
+  }
 });
 
 /**
