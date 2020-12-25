@@ -2,6 +2,7 @@ let express = require("express");
 let router = express.Router();
 let eventsDBClient = require("../data/eventsDBClient.js");
 const { response } = require("express");
+
 /**
  * GET ALL EVENTS
  */
