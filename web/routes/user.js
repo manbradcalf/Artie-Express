@@ -1,19 +1,19 @@
 let express = require("express");
 let router = express.Router();
+let usersDBClient = require("../../data/usersDBClient.js");
 /**
- *
+ *  GET ALL USERS
  */
-router.get("/", function (req, res) {
-  db.child("users")
-    .once("value")
-    .then(function (snapshot) {
-      let users = snapshot.val();
-      Object.keys(users).forEach((userId) => {
-        users[userId].url = `./user/${userId}`;
-      });
-      res.render("users", Object.entries(users));
+router.get("/", async (req, res) => {
+  let users = await usersDBClient.getUsers();
+  if (users) {
+    Object.keys(users).forEach((userId) => {
+      users[userId].url = `./user/${userId}`;
     });
+    res.render("users", Object.entries(users));
+  }
 });
+
 /**
  * GET USER DATA
  */
@@ -23,8 +23,8 @@ router.get("/:userId", function (req, res) {
     .once("value")
     .then(function (snapshot) {
       var user = snapshot.val();
-      user.imageUrl = `https://firebasestorage.googleapis.com/v0/b/bookyrself-staging.appspot.com/o/images%2fusers%2f${req.params.userId}?alt=media`
-      console.log(`user is ${JSON.stringify(user)}`)
+      user.imageUrl = `https://firebasestorage.googleapis.com/v0/b/bookyrself-staging.appspot.com/o/images%2fusers%2f${req.params.userId}?alt=media`;
+      console.log(`user is ${JSON.stringify(user)}`);
       res.render("user", user);
     });
 });
