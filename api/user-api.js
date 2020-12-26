@@ -1,7 +1,7 @@
 let express = require("express");
 let router = express.Router();
 let usersDBClient = require("../data/usersDBClient.js");
-
+let eventsDBClient = require("../data/eventsDBClient.js");
 /**
  * GET ALL USERS
  */
@@ -38,91 +38,79 @@ router.get("/:userId", async (req, res) => {
 /**
  * GET ALL EVENTS FOR USER
  */
-router.get("/:userId/events", function (req, res) {
-  // get event Ids from users events node in firebase
-  db.child(`/users/${req.params.userId}/events`)
-    .once("value")
-    .then((userData) => {
-      if (userData == null) {
-        res.status(404).send({ message: "unable to find user" });
-      } else {
-        // we got user data, get the events and build a response
-        let responseBody = { events: [] };
-        let eventIds = Object.keys(userData.val());
+router.get("/:userId/events", async (req, res) => {
+  let userResponse = await usersDBClient.getUser(req.params.userId);
 
-        // get event details for each eventId in user details
-        for (let i = 0; i < eventIds.length; i++) {
-          db.child(`/events/${eventIds[i]}`)
-            .once("value")
-            .then(function (eventDBInfo) {
-              let eventResponse = eventDBInfo.val();
-              eventResponse.eventId = eventDBInfo.key;
-              responseBody.events.push(eventResponse);
-
-              if (i === eventIds.length - 1) {
-                res.send(responseBody);
-              }
-            })
-            .catch((error) => {
-              console.log(error);
-              res.status(500).send(error);
-            });
-        }
-      }
-    })
-    .catch((error) => {
-      console.log(error);
-      res.status(500).send(error);
-    });
+  if (userResponse.events) {
+    let userEventsResponse = {};
+    let eventIds = Object.keys(userResponse.events);
+    for await (const eventId of eventIds) {
+      let event = await eventsDBClient.getEvent(eventId);
+      userEventsResponse[eventId] = await eventsDBClient.getEvent(eventId);
+    }
+    res.send(userEventsResponse);
+  } else if (userResponse.error.status == 404) {
+    res.sendStatus(404);
+  } else if (userResponse.status == 500) {
+    res.status(500).send(userResponse.error);
+  } else {
+    res.sendStatus(500);
+  }
 });
+
 /**
  * GET ALL EVENTS PENDING INVITATION REPLY FOR USER
  */
-router.get("/:userId/events/pending", function (req, res) {
-  let data = {
-    title: "Events pending invitation response",
-    eventIds: [],
+router.get("/:userId/events/pending", async (req, res) => {
+  let response = {
+    eventsIds: [],
   };
 
-  db.child("users")
-    .child(req.params.userId)
-    .child("events")
-    .once("value")
-    .then(function (snapshot) {
-      snapshot.forEach(function (event) {
-        if (!event.val().isAttending) {
-          data.eventIds.push(event.key.toString());
-        }
-      });
-      console.log("Pending response " + data.eventIds);
-      res.send(data);
-    });
+  let userDBResponse = await usersDBClient.getUser(req.params.userId);
+
+  if (userDBResponse.error) {
+    res.sendStatus(userDBResponse.status);
+  } else {
+  Object.entries(userDBResponse.events).forEach((event) => {
+    eventId = event[0];
+    inviteInfo = event[1];
+    console.log(`invite info: ${JSON.stringify(inviteInfo)}`);
+    if (
+      !inviteInfo.isInviteAccepted &&
+      !inviteInfo.isHost &&
+      !inviteInfo.isInviteRejected
+    ) {
+      response.eventsIds.push(eventId);
+    }
+  });
+
+  res.send(response);
+  }
+
 });
 
 /**
  * GET ALL EVENTS USER IS ATTENDING
  */
-router.get("/:userId/events/attending", function (req, res) {
-  let data = {
-    title: "Events user is attending",
+router.get("/:userId/events/attending", async (req, res) => {
+  let response = {
     eventIds: [],
   };
 
-  db.child("users")
-    .child(req.params.userId)
-    .child("events")
-    .once("value")
-    .then(function (snapshot) {
-      snapshot.forEach(function (event) {
-        if (event.val().isHosting || event.val().isAttending) {
-          console.log(
-            "Attending event" + " " + event.key + JSON.stringify(event)
-          );
-          data.eventIds.push(event.key);
-        }
-      });
-      res.send(data);
+  let userDBResponse = await usersDBClient.getUser(req.params.userId);
+
+  if (userDBResponse.error) {
+    res.sendStatus(userDBResponse.status);
+  } else {
+    Object.entries(userDBResponse.events).forEach((event) => {
+      eventId = event[0];
+      inviteInfo = event[1];
+      if (inviteInfo.isInviteAccepted || inviteInfo.isHost) {
+        response.eventIds.push(eventId);
+      }
     });
+    res.send(response);
+  }
 });
 
 //TODO: Get Contacts

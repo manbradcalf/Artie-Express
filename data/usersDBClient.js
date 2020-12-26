@@ -11,7 +11,7 @@ async function getUsers() {
 }
 
 async function getUser(userId) {
-  console.log(`userId requested is ${userId}`)
+  console.log(`userId requested is ${userId}`);
   let userResponse;
   try {
     await db
@@ -25,7 +25,7 @@ async function getUser(userId) {
           if (userData.val()) {
             userResponse = userData.val();
           } else {
-            eventResponse = {
+            userResponse = {
               error: `No user exists with userId ${userId}`,
               status: 404,
             };
