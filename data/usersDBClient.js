@@ -11,7 +11,6 @@ async function getUsers() {
 }
 
 async function getUser(userId) {
-  console.log(`userId requested is ${userId}`);
   let userResponse;
   try {
     await db
@@ -41,4 +40,17 @@ async function getUser(userId) {
   return userResponse;
 }
 
-module.exports = { getUser, getUsers };
+async function updateUser(userId, user) {
+  try {
+    await db.child(`users/${userId}`).set(user);
+    return await db.child(`users/${userId}`).once("value");
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+module.exports = {
+  getUser,
+  getUsers,
+  updateUser
+};

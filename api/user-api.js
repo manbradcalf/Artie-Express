@@ -2,6 +2,8 @@ let express = require("express");
 let router = express.Router();
 let usersDBClient = require("../data/usersDBClient.js");
 let eventsDBClient = require("../data/eventsDBClient.js");
+let invitesDBClient = require("../data/invitesDBClient.js");
+const { response } = require("express");
 /**
  * GET ALL USERS
  */
@@ -62,68 +64,102 @@ router.get("/:userId/events", async (req, res) => {
  * GET ALL EVENTS PENDING INVITATION REPLY FOR USER
  */
 router.get("/:userId/events/pending", async (req, res) => {
-  let response = {
-    eventsIds: [],
-  };
-
   let userDBResponse = await usersDBClient.getUser(req.params.userId);
-
   if (userDBResponse.error) {
     res.sendStatus(userDBResponse.status);
   } else {
-  Object.entries(userDBResponse.events).forEach((event) => {
-    eventId = event[0];
-    inviteInfo = event[1];
-    console.log(`invite info: ${JSON.stringify(inviteInfo)}`);
-    if (
-      !inviteInfo.isInviteAccepted &&
-      !inviteInfo.isHost &&
-      !inviteInfo.isInviteRejected
-    ) {
-      response.eventsIds.push(eventId);
+    let response = { events: {} };
+    let events = Object.entries(userDBResponse.events);
+    for await (const event of events) {
+      eventId = event[0];
+      inviteInfo = event[1];
+      console.log(`invite info: ${JSON.stringify(inviteInfo)}`);
+      if (
+        !inviteInfo.isInviteAccepted &&
+        !inviteInfo.isHost &&
+        !inviteInfo.isInviteRejected
+      ) {
+        response.events[eventsId] = await eventsDBClient.getEvent(eventId);
+      }
     }
-  });
-
-  res.send(response);
+    res.send(response);
   }
-
 });
 
 /**
  * GET ALL EVENTS USER IS ATTENDING
  */
 router.get("/:userId/events/attending", async (req, res) => {
-  let response = {
-    eventIds: [],
-  };
-
   let userDBResponse = await usersDBClient.getUser(req.params.userId);
-
   if (userDBResponse.error) {
     res.sendStatus(userDBResponse.status);
   } else {
-    Object.entries(userDBResponse.events).forEach((event) => {
+    let events = Object.entries(userDBResponse.events);
+    let response = { events: {} };
+
+    for await (const event of events) {
       eventId = event[0];
       inviteInfo = event[1];
       if (inviteInfo.isInviteAccepted || inviteInfo.isHost) {
-        response.eventIds.push(eventId);
+        response.events[eventId] = await eventsDBClient.getEvent(eventId);
       }
-    });
+    }
     res.send(response);
   }
 });
 
-//TODO: Get Contacts
-//         @GET("/users/{id}/contacts.json")
-//         getUserContacts(@Path("id") userId: String): Response<HashMap<String, Boolean>>
+router.get("/:userId/contacts", async (req, res) => {
+  let userDBResponse = await usersDBClient.getUser(req.params.userId);
+  if (userDBResponse.error) {
+    res.sendStatus(userDBResponse.status);
+  } else {
+    let response = { contacts: {} };
+    for await (const contactUserId of Object.keys(userDBResponse.contacts)) {
+      let userInfo = await usersDBClient.getUser(contactUserId);
+      response.contacts[contactUserId] = userInfo;
+    }
+    res.send(response);
+  }
+});
 
-//TODO: Update user
-//         @PUT("/users/{userId}.json")
-//         updateUser(@Body user: User, @Path("userId") userId: String): Response<User>
+// Update user
+// TODO: Finish
+router.put("/:userId", async (req, res) => {
+  if (req.body) {
+    let response = await usersDBClient.updateUser(req.params.userId, req.body);
+    res.send(response);
+  } else {
+    res.send({ error: "Please provide a request body for the user update" });
+  }
+});
 
 //TODO: Reject Invite
 //         @PUT("/users/{userId}/events/{eventId}/isInviteRejected.json")
 //         rejectInvite(@Body bool: Boolean?, @Path("userId") userId: String, @Path("eventId") eventId: String): Response<Boolean>
+router.put("/:userId/events/:eventId/rejectInvite", async (req, res) => {
+  let originalInviteStatus = await invitesDBClient.getInviteStatus(
+    req.params.userId,
+    req.params.eventId
+  );
+
+  let updateInviteStatus = await invitesDBClient.updateInviteStatus(
+    req.params.userId,
+    req.params.eventId,
+    false
+  );
+
+  if (!updateInviteStatus.error) {
+    res.send(updateInviteStatus);
+  } else {
+    // reset invite status
+    invitesDBClient.resetInviteStatus(
+      req.params.userId,
+      req.params.eventId,
+      originalInviteStatus
+    );
+    res.status(500).send({ error: "Something went wrong woopsi" });
+  }
+});
 
 //TODO: Accept Invite
 //         @PUT("/users/{userId}/events/{eventId}/isInviteAccepted.json")
