@@ -1,19 +1,20 @@
 async function updateInviteStatus(userId, eventId, isInviteAccepted) {
   try {
-    // set both accept and reject to show the user has responded to the invite
-    // as "false" for accepted or rejected could mean just not responded
-    await db
-      .child(`users/${userId}/events/${eventId}/isInviteAccepted`)
-      .set(isInviteAccepted);
-
-    await db
-      .child(`events/${eventId}/events/${eventId}/isInviteRejected`)
-      .set(!isInviteAccepted);
+    if (isInviteAccepted) {
+      await db
+        .child(`users/${userId}/events/${eventId}`)
+        .set({ isInviteAccepted: true });
+    } else {
+      await db
+        .child(`users/${userId}/events/${eventId}`)
+        .set({ isInviteRejected: true });
+    }
 
     // update the event's invitation status, which is just a boolean
     // representing attending status
     await db.child(`events/${eventId}/users/${userId}`).set(isInviteAccepted);
 
+    // return the updated value of the invite
     return await getInviteStatus(userId, eventId);
   } catch (e) {
     return { error: e };
@@ -26,11 +27,18 @@ async function resetInviteStatus(userId, eventId, inviteStatus) {
 }
 
 async function getInviteStatus(userId, eventId) {
+  let inviteResponse;
   try {
-    return await db.child(`users/${userId}/events/${eventId}}`).once("value");
+    await db
+      .child(`users/${userId}/events/${eventId}`)
+      .once("value")
+      .then((invite) => {
+        inviteResponse = invite.val();
+      });
   } catch (e) {
     return { error: e };
   }
+  return inviteResponse;
 }
 
 module.exports = { updateInviteStatus, getInviteStatus, resetInviteStatus };

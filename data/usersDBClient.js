@@ -52,5 +52,5 @@ async function updateUser(userId, user) {
 module.exports = {
   getUser,
   getUsers,
-  updateUser
+  updateUser,
 };

@@ -133,10 +133,7 @@ router.put("/:userId", async (req, res) => {
   }
 });
 
-//TODO: Reject Invite
-//         @PUT("/users/{userId}/events/{eventId}/isInviteRejected.json")
-//         rejectInvite(@Body bool: Boolean?, @Path("userId") userId: String, @Path("eventId") eventId: String): Response<Boolean>
-router.put("/:userId/events/:eventId/rejectInvite", async (req, res) => {
+router.put("/:userId/events/:eventId/acceptInvite", async (req, res) => {
   let originalInviteStatus = await invitesDBClient.getInviteStatus(
     req.params.userId,
     req.params.eventId
@@ -145,9 +142,8 @@ router.put("/:userId/events/:eventId/rejectInvite", async (req, res) => {
   let updateInviteStatus = await invitesDBClient.updateInviteStatus(
     req.params.userId,
     req.params.eventId,
-    false
+    req.body.inviteResponse
   );
-
   if (!updateInviteStatus.error) {
     res.send(updateInviteStatus);
   } else {
@@ -160,11 +156,6 @@ router.put("/:userId/events/:eventId/rejectInvite", async (req, res) => {
     res.status(500).send({ error: "Something went wrong woopsi" });
   }
 });
-
-//TODO: Accept Invite
-//         @PUT("/users/{userId}/events/{eventId}/isInviteAccepted.json")
-//         acceptInvite(@Body bool: Boolean?, @Path("userId") userId: String, @Path("eventId") eventId: String): Response<Boolean>
-
 //         @PATCH("/users/{userId}.json")
 //         patchUser(@Body user: User, @Path("userId") userId: String): Response<User>
 
