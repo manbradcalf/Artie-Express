@@ -34,6 +34,7 @@ router.get("/:eventId", async (req, res) => {
     res.status(eventResponse.status).send({ error: eventResponse.error });
   }
 });
+
 /**
  * GET EVENT USERS
  */

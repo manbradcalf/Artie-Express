@@ -4,6 +4,7 @@ let usersDBClient = require("../data/usersDBClient.js");
 let eventsDBClient = require("../data/eventsDBClient.js");
 let invitesDBClient = require("../data/invitesDBClient.js");
 const { response } = require("express");
+
 /**
  * GET ALL USERS
  */
@@ -133,6 +134,7 @@ router.put("/:userId", async (req, res) => {
   }
 });
 
+// Accept Invite
 router.put("/:userId/events/:eventId/acceptInvite", async (req, res) => {
   let originalInviteStatus = await invitesDBClient.getInviteStatus(
     req.params.userId,
@@ -153,9 +155,10 @@ router.put("/:userId/events/:eventId/acceptInvite", async (req, res) => {
       req.params.eventId,
       originalInviteStatus
     );
-    res.status(500).send({ error: "Something went wrong woopsi" });
+    res.status(500).send({ error: "Something went wrong, woopsie!" });
   }
 });
+
 //         @PATCH("/users/{userId}.json")
 //         patchUser(@Body user: User, @Path("userId") userId: String): Response<User>
 
