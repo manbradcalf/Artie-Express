@@ -1,8 +1,19 @@
 <img class="user-detail-image" src={{imageUrl}}>
 <div class="user-detail-info">
+
 {{user.bio}}
-<h1 id="username">{{username}}</h1>
-<h2 id="citystate">{{citystate}}</h2>
-<h3 id="tags"><i>{{tags}}</i></h3>
+<div class="user-detail-events-header"><h1 id="username">{{username}}</h1></div>
+<h4 id="citystate">{{citystate}}</h4>
+<h4 id="tags"><i>{{tags}}</i></h4>
 <a href=//{{{url}}}/>{{url}}</a>
+</div>
+{{#if this.events}}
+<div class="user-detail-events">
+    <div class="user-detail-events-header"><h2>Events</h2></div>
+  {{#each events}}
+      <div class="list-item">
+          <a href=http://localhost:3000/event/{{@key}}>{{@key}}</a>
+      </div>
+  {{/each}}
+{{/if}}
 </div>

@@ -3,24 +3,49 @@ body {
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
-.list-item {
-  margin: 1vw;
+.list-item-container {
   padding: 1vw;
-  border: 1px;
-  border-style: solid;
+  max-width: 40vw;
+}
+
+.list-item {
+  padding: 1vw;
+  border-bottom: black;
+  border-bottom-color: black;
+  border-bottom: 1px;
+  max-width: 100%;
+  border-bottom-style: solid;
 }
 
 .user-detail-image {
-  width: 25%;
+  width: 50%;
   height: auto;
-  border-radius: 2vw;
+  display: block;
+  margin-bottom: 1.5vw;
 }
 
 .user-detail-info {
-  margin: 3vw;
+  margin: 1.5vw;
   display: inline-block;
-  width: 40vw;
-  vertical-align: middle;
+  width: fit-content;
+  vertical-align: top;
+  padding: 1vw;
+  border: black;
+  border-style: solid;
+}
+
+.user-detail-events {
+  padding: 1vw;
+  width: fit-content;
+  display: inline-block;
+  border: 3px;
+  border-style: solid;
+  margin: 1.5vw;
+  vertical-align: top;
+}
+
+.user-detail-events-header {
+  border-bottom-style: solid;
 }
 
 .sidebar {
@@ -59,4 +84,8 @@ div.content {
 
 a {
   color: #00b7ff;
+}
+
+.h2 {
+  padding: 0.5vw;
 }
