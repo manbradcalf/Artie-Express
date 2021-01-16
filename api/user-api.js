@@ -3,7 +3,10 @@ let router = express.Router();
 let usersDBClient = require("../data/usersDBClient.js");
 let eventsDBClient = require("../data/eventsDBClient.js");
 let invitesDBClient = require("../data/invitesDBClient.js");
-const { response } = require("express");
+let axios = require("axios");
+const fbUsersAPI = axios.create({
+  baseURL: "https://bookyrself-staging.firebaseio.com/users",
+});
 
 /**
  * GET ALL USERS
@@ -25,6 +28,7 @@ router.get("/", async (req, res) => {
  * GET USER DATA
  */
 router.get("/:userId", async (req, res) => {
+  console.log(`getting user for userId something else now`);
   try {
     let user = await usersDBClient.getUser(req.params.userId);
     if (user) {
@@ -68,22 +72,28 @@ router.get("/:userId/events/pending", async (req, res) => {
   let userDBResponse = await usersDBClient.getUser(req.params.userId);
   if (userDBResponse.error) {
     res.sendStatus(userDBResponse.status);
-  } else {
+  } else if (userDBResponse.events) {
     let response = { events: {} };
     let events = Object.entries(userDBResponse.events);
-    for await (const event of events) {
-      eventId = event[0];
-      inviteInfo = event[1];
-      console.log(`invite info: ${JSON.stringify(inviteInfo)}`);
-      if (
-        !inviteInfo.isInviteAccepted &&
-        !inviteInfo.isHost &&
-        !inviteInfo.isInviteRejected
-      ) {
-        response.events[eventsId] = await eventsDBClient.getEvent(eventId);
+    if (events) {
+      for await (const event of events) {
+        eventId = event[0];
+        inviteInfo = event[1];
+        console.log(`invite info: ${JSON.stringify(inviteInfo)}`);
+        if (
+          !inviteInfo.isInviteAccepted &&
+          !inviteInfo.isHost &&
+          !inviteInfo.isInviteRejected
+        ) {
+          response.events[eventsId] = await eventsDBClient.getEvent(eventId);
+        }
       }
+      res.send(response);
+    } else {
+      res.sendStatus(404);
     }
-    res.send(response);
+  } else {
+    res.sendStatus(404)
   }
 });
 
@@ -123,8 +133,22 @@ router.get("/:userId/contacts", async (req, res) => {
   }
 });
 
+// Patch user
+//
+router.patch(`/:userId`, async (req, res) => {
+  let user = await fbUsersAPI.get(`/${req.params.userId}.json`);
+  if (user.data) {
+    let fbresponse = await fbUsersAPI.patch(
+      `/${req.params.userId}.json`,
+      req.body
+    );
+    res.status(fbresponse.status).send(fbresponse.data);
+  } else {
+    res.sendStatus(404);
+  }
+});
+
 // Update user
-// TODO: Finish
 router.put("/:userId", async (req, res) => {
   if (req.body) {
     let response = await usersDBClient.updateUser(req.params.userId, req.body);
@@ -158,9 +182,6 @@ router.put("/:userId/events/:eventId/acceptInvite", async (req, res) => {
     res.status(500).send({ error: "Something went wrong, woopsie!" });
   }
 });
-
-//         @PATCH("/users/{userId}.json")
-//         patchUser(@Body user: User, @Path("userId") userId: String): Response<User>
 
 //TODO: Add Contact
 //         @PUT("/users/{userId}/contacts/{contactId}.json")

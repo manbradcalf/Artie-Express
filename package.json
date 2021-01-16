@@ -4,9 +4,10 @@
   "private": true,
   "scripts": {
     "start": "node bin/www.js",
-    "debug": "node --inspect bin/www.js "
+    "debug": "node --inspect bin/www.js"
   },
   "dependencies": {
+    "axios": "^0.21.1",
     "bootstrap": "^4.5.3",
     "cookie-parser": "^1.4.5",
     "debug": "~2.6.9",
