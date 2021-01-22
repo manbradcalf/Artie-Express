@@ -2,9 +2,9 @@
 <div class="user-detail-info">
 
 {{user.bio}}
-<div class="user-detail-events-header"><h1 id="username">{{username}}</h1></div>
+<div class="user-detail-events-header"><h2 id="username">{{username}}</h2></div>
 <h4 id="citystate">{{citystate}}</h4>
-<h4 id="tags"><i>{{tags}}</i></h4>
+<p id="tags"><i>{{tags}}</i></p>
 <a href=//{{{url}}}/>{{url}}</a>
 </div>
 {{#if this.events}}
@@ -12,7 +12,9 @@
     <div class="user-detail-events-header"><h2>Events</h2></div>
   {{#each events}}
       <div class="list-item">
-          <a href=http://localhost:3000/event/{{@key}}>{{@key}}</a>
+        <a href=http://localhost:3000/event/{{@key}}><b>{{eventname}}</b></a>
+        <p>&#127760;  {{citystate}}</p>
+        <p>	&#128197; {{date}}</p>
       </div>
   {{/each}}
 {{/if}}

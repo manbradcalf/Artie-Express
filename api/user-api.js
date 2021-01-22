@@ -32,6 +32,15 @@ router.get("/:userId", async (req, res) => {
   try {
     let user = await usersDBClient.getUser(req.params.userId);
     if (user) {
+      if (user.events) {
+        for (event in user.events) {
+          // TODO: should i get all event data here?
+          let eventData = await eventsDBClient.getEvent(event)
+          user.events[event].eventname = eventData.eventname
+          user.events[event].date = eventData.date
+          user.events[event].citystate = eventData.citystate
+        }
+      }
       res.send(user);
     } else {
       console.log(`user is ${JSON.stringify(user)}`);

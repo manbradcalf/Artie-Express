@@ -2,6 +2,7 @@ let express = require("express");
 let router = express.Router();
 let usersDBClient = require("../../data/usersDBClient.js");
 let eventsDBClient = require("../../data/eventsDBClient.js");
+const axios = require("axios")
 /**
  *  GET ALL USERS
  */
@@ -19,14 +20,12 @@ router.get("/", async (req, res) => {
  * GET USER DATA
  */
 router.get("/:userId", async (req, res) => {
-  let userResponse = await usersDBClient.getUser(req.params.userId);
+//   let userResponse = await usersDBClient.getUser(req.params.userId);
+  let userResponse = await axios.get(`http://localhost:3000/api/user/${req.params.userId}`)
 
-  if (!userResponse.error) {
-    let user = userResponse;
+  if (userResponse.statusText == "OK") {
+    let user = userResponse.data;
     user.imageUrl = `https://firebasestorage.googleapis.com/v0/b/bookyrself-staging.appspot.com/o/images%2fusers%2f${req.params.userId}?alt=media`;
-    if (user.events) {
-      console.log(`events is ${JSON.stringify(user.events)}`);
-    }
     res.render("user", user);
   }
 });
