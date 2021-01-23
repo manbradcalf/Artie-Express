@@ -1,11 +1,11 @@
-<h1>{{title}}</h1>
+<h1>{{ title }}</h1>
 
 <ul>
+  {{#each events}}
 
-{{#each events}}
+  <li>
+    <a href="{{ this.toString }}">{{ this.toString }}</a>
+  </li>
 
-<li><a href={{this.toString}}>{{this.toString}}</a></li>
-
-{{/each}}
-
+  {{/each}}
 </ul>

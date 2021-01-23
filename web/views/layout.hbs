@@ -1,28 +1,50 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <title>{{title}}</title>
-    <link rel='stylesheet' href='https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css'/>
-    <link rel="stylesheet" href="/stylesheets/style.css"/>
-    <link rel="apple-touch-icon" sizes="180x180" href="/favicon_io/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon_io/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon_io/favicon-16x16.png">
-    <link rel="manifest" href="/favicon_io/site.webmanifest">
-</head>
-<body>
-  <div class="wrapper">
-    <div class="bg-light border-right sidebar">
-    <div class="header"><h1>Artie</h1></div>
-        <div class="list-group">
-            <a id="home" class="active" href="/">Home</a>
-            <a id="events" href="/event">Events</a>
-            <a id="users" href="/user">Users</a>
-            <a id="about" href="/about">About</a>
+  <head>
+    <title>{{ title }}</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+    />
+    <link rel="stylesheet" href="/stylesheets/style.css" />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="/favicon_io/apple-touch-icon.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="/favicon_io/favicon-32x32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="/favicon_io/favicon-16x16.png"
+    />
+    <link rel="manifest" href="/favicon_io/site.webmanifest" />
+  </head>
+  <body>
+    <div class="wrapper">
+      <div class="bg-light border-right sidebar">
+        <div class="header">
+          <h1>Artie</h1>
+          <img
+            src="images/artie-header-image.jpg"
+            width="180"
+            height="max-height"
+          />
         </div>
+        <div class="list-group">
+          <a id="home" class="active" href="/">Home</a>
+          <a id="events" href="/event">Events</a>
+          <a id="users" href="/user">Users</a>
+          <a id="about" href="/about">About</a>
+        </div>
+      </div>
+      <div class="content">{{{body}}}</div>
     </div>
-    <div class="content">
-        {{{body}}}
-    </div>
-</div>
-</body>
+  </body>
 </html>

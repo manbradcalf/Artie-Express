@@ -1,9 +1,9 @@
 <div class="list-item-container">
-{{#each this}}
+  {{#each this}}
   {{#if this.[1].username}}
-    <div class="list-item">  
-      <a href={{this.[1].url}}>{{this.[1].username}}</a>
-    </div>
+  <div class="list-item">
+    <a href="{{this.[1].url}}">{{this.[1].username}}</a>
+  </div>
   {{/if}}
-{{/each}}
+  {{/each}}
 </div>

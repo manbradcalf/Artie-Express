@@ -1,7 +1,7 @@
 {{#each this}}
-  {{#if this.[1].eventname}}
-    <div class="list-item">  
-      <a href={{this.[1].url}}>{{this.[1].eventname}}</a>
-    </div>
-  {{/if}}
+{{#if this.[1].eventname}}
+<div class="list-item">
+  <a href="{{this.[1].url}}">{{this.[1].eventname}}</a>
+</div>
+{{/if}}
 {{/each}}
