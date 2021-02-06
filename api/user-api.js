@@ -150,7 +150,7 @@ router.patch(`/:userId`, async (req, res) => {
     path += req.body.dBPath;
   }
   path += ".json";
-  let fbresponse = await fbUsersAPI.patch(path, req.body.data );
+  let fbresponse = await fbUsersAPI.patch(path, req.body.data);
   res.status(fbresponse.status).send(fbresponse.data);
 });
 
