@@ -35,10 +35,10 @@ router.get("/:userId", async (req, res) => {
       if (user.events) {
         for (event in user.events) {
           // TODO: should i get all event data here?
-          let eventData = await eventsDBClient.getEvent(event)
-          user.events[event].eventname = eventData.eventname
-          user.events[event].date = eventData.date
-          user.events[event].citystate = eventData.citystate
+          let eventData = await eventsDBClient.getEvent(event);
+          user.events[event].eventname = eventData.eventname;
+          user.events[event].date = eventData.date;
+          user.events[event].citystate = eventData.citystate;
         }
       }
       res.send(user);
@@ -102,7 +102,7 @@ router.get("/:userId/events/pending", async (req, res) => {
       res.sendStatus(404);
     }
   } else {
-    res.sendStatus(404)
+    res.sendStatus(404);
   }
 });
 
@@ -143,18 +143,15 @@ router.get("/:userId/contacts", async (req, res) => {
 });
 
 // Patch user
-//
+// This is essentially a wrapper of the fb db endpoint
 router.patch(`/:userId`, async (req, res) => {
-  let user = await fbUsersAPI.get(`/${req.params.userId}.json`);
-  if (user.data) {
-    let fbresponse = await fbUsersAPI.patch(
-      `/${req.params.userId}.json`,
-      req.body
-    );
-    res.status(fbresponse.status).send(fbresponse.data);
-  } else {
-    res.sendStatus(404);
+  let path = req.params.userId;
+  if (req.body.dBPath) {
+    path += req.body.dBPath;
   }
+  path += ".json";
+  let fbresponse = await fbUsersAPI.patch(path, req.body.data );
+  res.status(fbresponse.status).send(fbresponse.data);
 });
 
 // Update user
