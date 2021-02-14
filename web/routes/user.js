@@ -20,11 +20,13 @@ router.get("/", async (req, res) => {
  * GET USER DATA
  */
 router.get("/:userId", async (req, res) => {
-//   let userResponse = await usersDBClient.getUser(req.params.userId);
+  //TODO: stop using localhost and use something parameterized
   let userResponse = await axios.get(`http://localhost:3000/api/user/${req.params.userId}`)
 
   if (userResponse.statusText == "OK") {
     let user = userResponse.data;
+    user.title = user.username
+    //TODO: theres gotta be a better way
     user.imageUrl = `https://firebasestorage.googleapis.com/v0/b/bookyrself-staging.appspot.com/o/images%2fusers%2f${req.params.userId}?alt=media`;
     res.render("user", user);
   }

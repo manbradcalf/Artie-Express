@@ -23,6 +23,7 @@ router.get("/", async (req, res) => {
  */
 router.get("/:eventId", async (req, res) => {
   let event = await eventsDBClient.getEvent(req.params.eventId);
+  event.title = event.eventname
   res.render("event", event);
 });
 
