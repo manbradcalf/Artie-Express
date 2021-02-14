@@ -142,17 +142,14 @@ router.get("/:userId/contacts", async (req, res) => {
   }
 });
 
-// Patch user
-// This is essentially a wrapper of the fb db endpoint
-router.patch(`/:userId`, async (req, res) => {
-  let path = req.params.userId;
-  if (req.body.dBPath) {
-    path += req.body.dBPath;
+async function patchUser(userId, dBPath, data) {
+  let path = userId;
+  if (dBPath) {
+    path += dBPath;
   }
   path += ".json";
-  let fbresponse = await fbUsersAPI.patch(path, req.body.data);
-  res.status(fbresponse.status).send(fbresponse.data);
-});
+  await fbUsersAPI.patch(path, data);
+}
 
 // Update user
 router.put("/:userId", async (req, res) => {
@@ -189,9 +186,15 @@ router.put("/:userId/events/:eventId/acceptInvite", async (req, res) => {
   }
 });
 
-//TODO: Add Contact
-//         @PUT("/users/{userId}/contacts/{contactId}.json")
-//         addContactToUserAsync(@Body isContact: Boolean, @Path("userId") userId: String, @Path("contactId") contactId: String): Response<Boolean>
+// Add Contact
+router.put("/:userId/contacts/:contactId", async (req, res) => {
+  //TODO: Validate both userId and contactId are correct
+  let response = await fbUsersAPI.put(
+    `/${req.params.userId}/contacts/${req.params.contactId}.json`,
+    { isFriend: true }
+  );
+  res.status(response.status).send(response.data);
+});
 
 //TODO: Add Event To User
 //         @PUT("/users/{userId}/events/{eventId}.json")
