@@ -1,6 +1,5 @@
 let createError = require("http-errors");
 let express = require("express");
-let path = require("path");
 let cookieParser = require("cookie-parser");
 let logger = require("morgan");
 let admin = require("firebase-admin");
@@ -39,12 +38,12 @@ app.use("/static", express.static("public"));
 app.use("/favicon.ico", express.static("/favicon.ico"));
 
 // catch 404 and forward to error handler
-app.use(function (req, res, next) {
+app.use(function (_req, _res, next) {
   next(createError(404));
 });
 
 // error handler
-app.use(function (err, req, res, next) {
+app.use(function (err, req, res) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get("env") === "development" ? err : {};
@@ -54,7 +53,7 @@ app.use(function (err, req, res, next) {
   res.render("error");
 });
 
-app.use(function (req, res, next) {
+app.use(function (req, _res, _next) {
   req.userAgent = req.headers["user-agent"];
 });
 

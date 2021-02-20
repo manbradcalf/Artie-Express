@@ -2,7 +2,8 @@ let express = require("express");
 let router = express.Router();
 let usersDBClient = require("../../data/usersDBClient.js");
 let eventsDBClient = require("../../data/eventsDBClient.js");
-const axios = require("axios")
+const axios = require("axios");
+
 /**
  *  GET ALL USERS
  */
@@ -21,16 +22,19 @@ router.get("/", async (req, res) => {
  */
 router.get("/:userId", async (req, res) => {
   //TODO: stop using localhost and use something parameterized
-  let userResponse = await axios.get(`http://localhost:3000/api/user/${req.params.userId}`)
+  let userResponse = await axios.get(
+    `http://localhost:3000/api/user/${req.params.userId}`
+  );
 
   if (userResponse.statusText == "OK") {
     let user = userResponse.data;
-    user.title = user.username
+    user.title = user.username;
     //TODO: theres gotta be a better way
     user.imageUrl = `https://firebasestorage.googleapis.com/v0/b/bookyrself-staging.appspot.com/o/images%2fusers%2f${req.params.userId}?alt=media`;
     res.render("user", user);
   }
 });
+
 /**
  * GET ALL EVENTS FOR USER
  */

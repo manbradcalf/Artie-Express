@@ -128,6 +128,9 @@ router.get("/:userId/events/attending", async (req, res) => {
   }
 });
 
+/**
+ * GET USERS CONTACTS
+ */
 router.get("/:userId/contacts", async (req, res) => {
   let userDBResponse = await usersDBClient.getUser(req.params.userId);
   if (userDBResponse.error) {
@@ -142,16 +145,9 @@ router.get("/:userId/contacts", async (req, res) => {
   }
 });
 
-async function patchUser(userId, dBPath, data) {
-  let path = userId;
-  if (dBPath) {
-    path += dBPath;
-  }
-  path += ".json";
-  await fbUsersAPI.patch(path, data);
-}
-
-// Update user
+/**
+ * UPDATE USER
+ */
 router.put("/:userId", async (req, res) => {
   if (req.body) {
     let response = await usersDBClient.updateUser(req.params.userId, req.body);
