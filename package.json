@@ -16,7 +16,7 @@
     "hbs": "^4.1.1",
     "http-errors": "~1.6.3",
     "morgan": "~1.9.1",
-    "node-forge": ">=0.10.0",
+    "node-forge": ">=1.0.0",
     "react": "^16.14.0",
     "request": "latest",
     "underscore": "^1.12.1"
