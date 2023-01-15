@@ -18,11 +18,12 @@ body {
 }
 
 .user-detail-image {
-  width: 50%;
-  height: auto;
+  width: 35vw;
+  height: 25vw;
   display: block;
   margin-bottom: 1.5vw;
   margin-left: 1.5vw;
+  object-fit: scale-down;
 }
 
 .user-detail-info {
